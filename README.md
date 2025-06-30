@@ -1,4 +1,4 @@
-# Local LLM
+# Private AI
 
 A Python library that provides an OpenAI-like API for local Large Language Models across all platforms. **For developers** to include in their applications, enabling their **users** to run powerful AI models locally on their own machines.
 
@@ -40,17 +40,17 @@ This library is designed for **application developers** who want to give their u
 ### For Developers
 
 ```bash
-pip install local-llm
+pip install private-ai
 ```
 
 For development and streaming support:
 ```bash
-pip install local-llm[dev,streaming]
+pip install private-ai[dev,streaming]
 ```
 
 For browser support:
 ```bash
-pip install local-llm[browser]
+pip install private-ai[browser]
 ```
 
 ### For End Users
@@ -67,7 +67,7 @@ The library automatically handles setup for each platform:
 ### Basic Integration (Cross-Platform)
 
 ```python
-from local_llm import CrossPlatformLLMClient
+from private_ai import CrossPlatformLLMClient
 
 # Automatically detects platform and initializes appropriate client
 client = CrossPlatformLLMClient()
@@ -86,7 +86,7 @@ print(response.choices[0].message.content)
 #### Desktop/Server (Ollama)
 
 ```python
-from local_llm import LocalLLM
+from private_ai import LocalLLM
 
 # Initialize the client (handles Ollama setup automatically)
 llm = LocalLLM()
@@ -106,7 +106,7 @@ print(response.choices[0].message.content)
 
 ```python
 import asyncio
-from local_llm import create_web_llm_client
+from private_ai import create_web_llm_client
 
 async def browser_chat():
     # Initialize WebLLM client
@@ -130,7 +130,7 @@ asyncio.run(browser_chat())
 #### Android (Google AI Edge)
 
 ```python
-from local_llm import create_android_llm_client
+from private_ai import create_android_llm_client
 
 # Initialize Android client
 client = create_android_llm_client(
@@ -154,7 +154,7 @@ print(response.choices[0].message.content)
 #### iOS (Apple Foundation Models)
 
 ```python
-from local_llm import create_ios_llm_client
+from private_ai import create_ios_llm_client
 
 # Initialize iOS client
 client = create_ios_llm_client(
@@ -179,7 +179,7 @@ For applications that should work across all platforms:
 
 ```python
 import asyncio
-from local_llm import CrossPlatformLLMClient
+from private_ai import CrossPlatformLLMClient
 
 async def unified_example():
     client = CrossPlatformLLMClient()
@@ -202,7 +202,7 @@ asyncio.run(unified_example())
 ### User-Friendly Setup
 
 ```python
-from local_llm import CrossPlatformLLMClient, OllamaConnectionError
+from private_ai import CrossPlatformLLMClient, OllamaConnectionError
 
 async def setup_local_ai():
     """Guide users through local AI setup on any platform."""
@@ -212,7 +212,7 @@ async def setup_local_ai():
         success = await client.initialize()
         if success:
             info = client.get_client_info()
-            print(f"✅ Local AI ready using {info['client_type']} on {info['platform']}!")
+            print(f"✅ Private AI ready using {info['client_type']} on {info['platform']}!")
             return client
         else:
             print("❌ No local AI backend available")
@@ -234,7 +234,7 @@ else:
 ### Streaming Responses
 
 ```python
-from local_llm import CrossPlatformLLMClient
+from private_ai import CrossPlatformLLMClient
 
 client = CrossPlatformLLMClient()
 await client.initialize()
@@ -255,7 +255,7 @@ for chunk in stream:
 ### Text Completion
 
 ```python
-from local_llm import CrossPlatformLLMClient
+from private_ai import CrossPlatformLLMClient
 
 client = CrossPlatformLLMClient()
 await client.initialize()
@@ -273,7 +273,7 @@ print(response.choices[0].text)
 ### Model Management for Users
 
 ```python
-from local_llm import CrossPlatformLLMClient
+from private_ai import CrossPlatformLLMClient
 
 client = CrossPlatformLLMClient()
 await client.initialize()
@@ -295,7 +295,7 @@ if client.client_type == "ollama":
 #### Desktop/Server (Ollama)
 
 ```python
-from local_llm import LocalLLM
+from private_ai import LocalLLM
 
 # Configure with custom settings
 llm = LocalLLM(
@@ -309,7 +309,7 @@ llm = LocalLLM(
 #### Browser (WebLLM)
 
 ```python
-from local_llm import create_web_llm_client
+from private_ai import create_web_llm_client
 
 client = await create_web_llm_client(
     model="Llama-3.1-8B-Instruct-q4f32_1-MLC",
@@ -322,7 +322,7 @@ client = await create_web_llm_client(
 #### Android (Google AI Edge)
 
 ```python
-from local_llm import create_android_llm_client
+from private_ai import create_android_llm_client
 
 client = create_android_llm_client(
     model_path="/data/local/tmp/llm/gemma-3.task",
@@ -339,7 +339,7 @@ client = create_android_llm_client(
 #### iOS (Apple Foundation Models)
 
 ```python
-from local_llm import create_ios_llm_client
+from private_ai import create_ios_llm_client
 
 client = create_ios_llm_client(
     instructions="You are a helpful AI assistant specialized in coding.",
@@ -352,7 +352,7 @@ client = create_ios_llm_client(
 ### Function Calling
 
 ```python
-from local_llm import CrossPlatformLLMClient
+from private_ai import CrossPlatformLLMClient
 
 client = CrossPlatformLLMClient()
 await client.initialize()
@@ -389,7 +389,7 @@ response = await client.chat_completion(
 ### Embeddings
 
 ```python
-from local_llm import CrossPlatformLLMClient
+from private_ai import CrossPlatformLLMClient
 
 client = CrossPlatformLLMClient()
 await client.initialize()
@@ -411,12 +411,12 @@ if client.client_type == "ollama":
 
 ```python
 import tkinter as tk
-from local_llm import CrossPlatformLLMClient
+from private_ai import CrossPlatformLLMClient
 
 class AIAssistantApp:
     def __init__(self):
         self.root = tk.Tk()
-        self.root.title("Local AI Assistant")
+        self.root.title("Private AI Assistant")
         
         # Initialize cross-platform client
         self.client = CrossPlatformLLMClient()
@@ -459,7 +459,7 @@ if __name__ == "__main__":
 
 ```python
 from flask import Flask, request, jsonify
-from local_llm import CrossPlatformLLMClient
+from private_ai import CrossPlatformLLMClient
 
 app = Flask(__name__)
 
@@ -495,7 +495,7 @@ if __name__ == '__main__':
 ### Mobile Application (React Native)
 
 ```javascript
-import { CrossPlatformLLMClient } from 'local-llm';
+import { CrossPlatformLLMClient } from 'private-ai';
 
 class MobileAI {
   constructor() {
@@ -505,10 +505,10 @@ class MobileAI {
   async initialize() {
     try {
       await this.client.initialize();
-      console.log('Local AI ready!');
+      console.log('Private AI ready!');
       return true;
     } catch (error) {
-      console.error('Failed to initialize local AI:', error);
+      console.error('Failed to initialize private AI:', error);
       return false;
     }
   }
@@ -538,7 +538,7 @@ const response = await ai.chat("Hello from mobile!");
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Local AI Chat</title>
+    <title>Private AI Chat</title>
 </head>
 <body>
     <div id="chat-container"></div>
@@ -546,7 +546,7 @@ const response = await ai.chat("Hello from mobile!");
     <button onclick="sendMessage()">Send</button>
 
     <script type="module">
-        import { CrossPlatformLLMClient } from 'https://esm.run/local-llm';
+        import { CrossPlatformLLMClient } from 'https://esm.run/private-ai';
         
         let client = null;
         
@@ -554,7 +554,7 @@ const response = await ai.chat("Hello from mobile!");
             try {
                 client = new CrossPlatformLLMClient();
                 await client.initialize();
-                console.log('Local AI initialized!');
+                console.log('Private AI initialized!');
             } catch (error) {
                 console.error('Failed to initialize:', error);
             }
@@ -586,7 +586,7 @@ const response = await ai.chat("Hello from mobile!");
 ### Code Generation Tool
 
 ```python
-from local_llm import CrossPlatformLLMClient
+from private_ai import CrossPlatformLLMClient
 
 class CodeGenerator:
     def __init__(self):
@@ -712,7 +712,7 @@ For iOS devices, Apple Foundation Models Framework provides:
 ### First-Time Setup
 
 ```python
-from local_llm import CrossPlatformLLMClient
+from private_ai import CrossPlatformLLMClient
 
 async def ensure_local_ai_ready():
     """Check if local AI is available and guide user through setup."""
@@ -722,28 +722,28 @@ async def ensure_local_ai_ready():
         success = await client.initialize()
         if success:
             info = client.get_client_info()
-            print(f"✅ Local AI ready using {info['client_type']}!")
+            print(f"✅ Private AI ready using {info['client_type']}!")
             return client
     except Exception as e:
-        print(f"❌ Local AI setup failed: {e}")
+        print(f"❌ Private AI setup failed: {e}")
     
     # Show platform-specific setup instructions
     platform = client.platform
     if platform == "desktop":
-        print("🔧 To use local AI, install Ollama from https://ollama.ai/")
+        print("🔧 To use private AI, install Ollama from https://ollama.ai/")
     elif platform == "android":
-        print("🔧 To use local AI, ensure Google AI Edge is available")
+        print("🔧 To use private AI, ensure Google AI Edge is available")
     elif platform == "ios":
-        print("🔧 To use local AI, enable Apple Intelligence in Settings")
+        print("🔧 To use private AI, enable Apple Intelligence in Settings")
     else:
-        print("🔧 To use local AI, ensure WebGPU is supported in your browser")
+        print("🔧 To use private AI, ensure WebGPU is supported in your browser")
     
     return None
 
 # In your application
 client = await ensure_local_ai_ready()
 if client:
-    # Local AI is ready
+    # Private AI is ready
     pass
 else:
     # Show alternative options or disable features
@@ -753,7 +753,7 @@ else:
 ### Model Download Progress
 
 ```python
-from local_llm import CrossPlatformLLMClient
+from private_ai import CrossPlatformLLMClient
 
 async def download_model_with_progress(model_name: str):
     """Download a model with progress feedback."""
@@ -786,7 +786,7 @@ if await download_model_with_progress("codellama:7b"):
 The library provides comprehensive error handling for different scenarios:
 
 ```python
-from local_llm import CrossPlatformLLMClient, LocalLLMError, OllamaConnectionError
+from private_ai import CrossPlatformLLMClient, LocalLLMError, OllamaConnectionError
 
 client = CrossPlatformLLMClient()
 
@@ -800,7 +800,7 @@ try:
 except OllamaConnectionError:
     print("Ollama is not running. Please start Ollama and try again.")
 except LocalLLMError as e:
-    print(f"Local AI error: {e}")
+    print(f"Private AI error: {e}")
     # Handle gracefully or fall back to cloud
 except Exception as e:
     print(f"Unexpected error: {e}")
@@ -812,7 +812,7 @@ except Exception as e:
 ### Platform-Specific Optimization
 
 ```python
-from local_llm import CrossPlatformLLMClient
+from private_ai import CrossPlatformLLMClient
 
 async def get_optimized_client():
     """Get a client optimized for the current platform."""
@@ -841,9 +841,9 @@ client = await get_optimized_client()
 ### Caching and Optimization
 
 ```python
-from local_llm import CrossPlatformLLMClient
+from private_ai import CrossPlatformLLMClient
 
-class OptimizedLocalAI:
+class OptimizedPrivateAI:
     def __init__(self):
         self.client = None
         self.response_cache = {}
@@ -879,9 +879,9 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Support
 
-- GitHub Issues: [Report bugs or request features](https://github.com/jeremynixon/local-llm/issues)
-- Documentation: [Full API documentation](https://local-llm.readthedocs.io)
-- Discord: [Join our community](https://discord.gg/local-llm)
+- GitHub Issues: [Report bugs or request features](https://github.com/jeremynixon/private-ai/issues)
+- Documentation: [Full API documentation](https://private-ai.readthedocs.io)
+- Discord: [Join our community](https://discord.gg/private-ai)
 
 ## Roadmap
 
