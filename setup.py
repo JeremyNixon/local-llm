@@ -16,7 +16,7 @@ setup(
     version="0.1.0",
     author="Local LLM Team",
     author_email="dev@localllm.ai",
-    description="OpenAI-like API for local LLMs using Ollama",
+    description="OpenAI-like API for local LLMs across all platforms",
     long_description=read_readme(),
     long_description_content_type="text/markdown",
     url="https://github.com/jeremynixon/local-llm",
@@ -51,6 +51,22 @@ setup(
         ],
         "web": [
             "flask>=2.0.0",
+        ],
+        "browser": [
+            "@mlc-ai/web-llm>=0.2.79",
+        ],
+        "android": [
+            "com.google.mediapipe:tasks-genai>=0.10.24",
+        ],
+        "ios": [
+            "Foundation>=1.0.0",
+        ],
+        "all": [
+            "sseclient-py>=1.7.0",
+            "flask>=2.0.0",
+            "@mlc-ai/web-llm>=0.2.79",
+            "com.google.mediapipe:tasks-genai>=0.10.24",
+            "Foundation>=1.0.0",
         ],
     },
     entry_points={

@@ -10,6 +10,9 @@ numpy>=1.21.0
 # Web application support (installed with pip install -e .[web])
 # flask>=2.0.0
 
+# Browser support (installed with pip install -e .[browser])
+# @mlc-ai/web-llm>=0.2.79
+
 # Development dependencies (installed with pip install -e .[dev])
 # pytest>=7.0.0
 # pytest-cov>=4.0.0

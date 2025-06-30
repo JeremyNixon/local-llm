@@ -6,6 +6,9 @@ with the same API patterns as OpenAI's Python client.
 """
 
 from .client import LocalLLM
+from .browser_client import WebLLMClient, create_web_llm_client
+from .android_client import AndroidLLMClient, create_android_llm_client
+from .ios_client import IOSLLMClient, create_ios_llm_client
 from .exceptions import LocalLLMError, ModelNotFoundError, OllamaConnectionError
 from .types import (
     ChatCompletion,
@@ -39,8 +42,14 @@ __author__ = "Local LLM Team"
 __email__ = "dev@localllm.ai"
 
 __all__ = [
-    # Main client
+    # Main clients
     "LocalLLM",
+    "WebLLMClient",
+    "create_web_llm_client",
+    "AndroidLLMClient",
+    "create_android_llm_client",
+    "IOSLLMClient",
+    "create_ios_llm_client",
     
     # Exceptions
     "LocalLLMError",

@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebLLM Browser Chatbot</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .status.loading {
+            background: linear-gradient(45deg, #ffecd2, #fcb69f);
+            color: #8b4513;
+        }
+        
+        .status.ready {
+            background: linear-gradient(45deg, #a8edea, #fed6e3);
+            color: #2d5016;
+        }
+        
+        .status.error {
+            background: linear-gradient(45deg, #ff9a9e, #fecfef);
+            color: #721c24;
+        }
+        
+        .chat-container {
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            height: 400px;
+            overflow-y: auto;
+            background: #fafafa;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            padding: 12px 16px;
+            border-radius: 18px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+        
+        .user-message {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            margin-left: auto;
+            text-align: right;
+        }
+        
+        .ai-message {
+            background: linear-gradient(45deg, #f093fb, #f5576c);
+            color: white;
+            margin-right: auto;
+        }
+        
+        .input-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        input, textarea, select, button {
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+        
+        input, textarea, select {
+            flex: 1;
+            background: white;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        button {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            cursor: pointer;
+            border: none;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+        }
+        
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .control-group label {
+            font-weight: bold;
+            color: #555;
+        }
+        
+        .progress {
+            width: 100%;
+            height: 20px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .model-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .model-info h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        
+        .typing-indicator {
+            display: none;
+            padding: 12px 16px;
+            background: #e9ecef;
+            border-radius: 18px;
+            color: #666;
+            font-style: italic;
+        }
+        
+        .typing-indicator.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 WebLLM Browser Chatbot</h1>
+        
+        <div id="status" class="status loading">
+            Initializing WebLLM...
+        </div>
+        
+        <div id="progress-container" style="display: none;">
+            <div class="progress">
+                <div id="progress-bar" class="progress-bar"></div>
+            </div>
+            <div id="progress-text">Loading model...</div>
+        </div>
+        
+        <div id="model-info" class="model-info" style="display: none;">
+            <h3>Model Information</h3>
+            <p><strong>Model:</strong> <span id="model-name">-</span></p>
+            <p><strong>Status:</strong> <span id="model-status">-</span></p>
+            <p><strong>Available Models:</strong> <span id="available-models">-</span></p>
+        </div>
+        
+        <div id="chat-section" style="display: none;">
+            <div class="controls">
+                <div class="control-group">
+                    <label for="model-select">Model:</label>
+                    <select id="model-select">
+                        <option value="Llama-3.1-8B-Instruct-q4f32_1-MLC">Llama 3.1 8B</option>
+                        <option value="Phi-3-mini-4k-instruct-q4f32_1-MLC">Phi 3 Mini</option>
+                        <option value="Mistral-7B-Instruct-v0.3-q4f32_1-MLC">Mistral 7B</option>
+                        <option value="Qwen2.5-7B-Instruct-q4f32_1-MLC">Qwen 2.5 7B</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label for="temperature">Temperature:</label>
+                    <input type="range" id="temperature" min="0" max="2" step="0.1" value="0.7">
+                    <span id="temp-value">0.7</span>
+                </div>
+                
+                <div class="control-group">
+                    <label for="max-tokens">Max Tokens:</label>
+                    <input type="number" id="max-tokens" min="1" max="2048" value="500">
+                </div>
+            </div>
+            
+            <div class="chat-container" id="chat-container">
+                <div class="message ai-message">
+                    Hello! I'm an AI assistant running entirely in your browser using WebLLM. 
+                    No server required - everything happens locally with WebGPU acceleration!
+                </div>
+            </div>
+            
+            <div class="typing-indicator" id="typing-indicator">
+                AI is thinking...
+            </div>
+            
+            <div class="input-container">
+                <textarea 
+                    id="message-input" 
+                    placeholder="Type your message here..." 
+                    rows="3"
+                    style="resize: vertical;"
+                ></textarea>
+                <button id="send-button" onclick="sendMessage()">Send</button>
+            </div>
+            
+            <div style="text-align: center;">
+                <button onclick="clearChat()" style="background: #dc3545;">Clear Chat</button>
+                <button onclick="downloadChat()" style="background: #28a745;">Download Chat</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Import WebLLM from CDN
+        import * as webllm from "https://esm.run/@mlc-ai/web-llm";
+        
+        let engine = null;
+        let isInitialized = false;
+        
+        // DOM elements
+        const statusDiv = document.getElementById('status');
+        const progressContainer = document.getElementById('progress-container');
+        const progressBar = document.getElementById('progress-bar');
+        const progressText = document.getElementById('progress-text');
+        const modelInfo = document.getElementById('model-info');
+        const chatSection = document.getElementById('chat-section');
+        const chatContainer = document.getElementById('chat-container');
+        const messageInput = document.getElementById('message-input');
+        const sendButton = document.getElementById('send-button');
+        const typingIndicator = document.getElementById('typing-indicator');
+        const modelSelect = document.getElementById('model-select');
+        const temperatureSlider = document.getElementById('temperature');
+        const tempValue = document.getElementById('temp-value');
+        const maxTokensInput = document.getElementById('max-tokens');
+        
+        // Initialize WebLLM
+        async function initializeWebLLM() {
+            try {
+                statusDiv.className = 'status loading';
+                statusDiv.textContent = 'Initializing WebLLM...';
+                
+                progressContainer.style.display = 'block';
+                
+                // Progress callback
+                const initProgressCallback = (progress) => {
+                    console.log('Initialization progress:', progress);
+                    
+                    if (progress.progress) {
+                        const percentage = Math.round(progress.progress * 100);
+                        progressBar.style.width = percentage + '%';
+                        progressText.textContent = progress.text || `Loading... ${percentage}%`;
+                    }
+                };
+                
+                // Get selected model
+                const selectedModel = modelSelect.value;
+                
+                // Create engine
+                engine = await webllm.CreateMLCEngine(
+                    selectedModel,
+                    { initProgressCallback: initProgressCallback }
+                );
+                
+                isInitialized = true;
+                
+                // Update UI
+                statusDiv.className = 'status ready';
+                statusDiv.textContent = '✅ WebLLM Ready!';
+                progressContainer.style.display = 'none';
+                modelInfo.style.display = 'block';
+                chatSection.style.display = 'block';
+                
+                // Update model info
+                document.getElementById('model-name').textContent = selectedModel;
+                document.getElementById('model-status').textContent = 'Loaded and Ready';
+                
+                // Get available models
+                try {
+                    const models = await engine.models.list();
+                    const modelNames = models.data.map(m => m.id).join(', ');
+                    document.getElementById('available-models').textContent = modelNames;
+                } catch (e) {
+                    document.getElementById('available-models').textContent = 'Error loading model list';
+                }
+                
+                console.log('WebLLM initialized successfully!');
+                
+            } catch (error) {
+                console.error('Failed to initialize WebLLM:', error);
+                statusDiv.className = 'status error';
+                statusDiv.textContent = `❌ Initialization failed: ${error.message}`;
+                progressContainer.style.display = 'none';
+            }
+        }
+        
+        // Send message function
+        window.sendMessage = async function() {
+            if (!isInitialized || !engine) {
+                alert('WebLLM is not initialized yet. Please wait.');
+                return;
+            }
+            
+            const message = messageInput.value.trim();
+            if (!message) return;
+            
+            // Add user message to chat
+            addMessage('user', message);
+            messageInput.value = '';
+            
+            // Show typing indicator
+            typingIndicator.classList.add('show');
+            
+            try {
+                // Get parameters
+                const temperature = parseFloat(temperatureSlider.value);
+                const maxTokens = parseInt(maxTokensInput.value);
+                
+                // Generate response
+                const response = await engine.chat.completions.create({
+                    messages: [
+                        { role: "system", content: "You are a helpful AI assistant running in the browser using WebLLM." },
+                        { role: "user", content: message }
+                    ],
+                    temperature: temperature,
+                    max_tokens: maxTokens,
+                    stream: false
+                });
+                
+                // Hide typing indicator
+                typingIndicator.classList.remove('show');
+                
+                // Add AI response to chat
+                const aiResponse = response.choices[0].message.content;
+                addMessage('ai', aiResponse);
+                
+            } catch (error) {
+                console.error('Error generating response:', error);
+                typingIndicator.classList.remove('show');
+                addMessage('ai', `Error: ${error.message}`);
+            }
+        };
+        
+        // Add message to chat
+        function addMessage(role, content) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}-message`;
+            messageDiv.textContent = content;
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        
+        // Clear chat
+        window.clearChat = function() {
+            chatContainer.innerHTML = '<div class="message ai-message">Chat cleared. How can I help you?</div>';
+        };
+        
+        // Download chat
+        window.downloadChat = function() {
+            const messages = Array.from(chatContainer.querySelectorAll('.message')).map(msg => {
+                const role = msg.classList.contains('user-message') ? 'User' : 'AI';
+                const content = msg.textContent;
+                return `${role}: ${content}`;
+            }).join('\n\n');
+            
+            const blob = new Blob([messages], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'webllm-chat.txt';
+            a.click();
+            URL.revokeObjectURL(url);
+        };
+        
+        // Event listeners
+        messageInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+        
+        temperatureSlider.addEventListener('input', function() {
+            tempValue.textContent = this.value;
+        });
+        
+        modelSelect.addEventListener('change', async function() {
+            if (isInitialized && engine) {
+                try {
+                    statusDiv.className = 'status loading';
+                    statusDiv.textContent = 'Switching model...';
+                    
+                    await engine.reload(this.value);
+                    
+                    statusDiv.className = 'status ready';
+                    statusDiv.textContent = '✅ Model switched successfully!';
+                    
+                    document.getElementById('model-name').textContent = this.value;
+                    
+                } catch (error) {
+                    console.error('Error switching model:', error);
+                    statusDiv.className = 'status error';
+                    statusDiv.textContent = `❌ Failed to switch model: ${error.message}`;
+                }
+            }
+        });
+        
+        // Initialize on page load
+        window.addEventListener('load', initializeWebLLM);
+    </script>
+</body>
+</html> 
